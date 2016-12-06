@@ -1,14 +1,20 @@
 package resources.rest
 
+import akka.actor.{ActorRef, Props}
 import akka.http.scaladsl.server.Route
-import models.{StubUser, User}
+import models.UserRepository.AddUserCommand
+import models.{StubUser, User, UserPersistenceActor}
 import util.UUIDGenerator.generate
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait UserResource extends BaseResource {
 
+  import configurations.WebServer._
+
   implicit val ec: ExecutionContext = ExecutionContext.global
+
+  val userPersistanceActor: ActorRef = system.actorOf(Props[UserPersistenceActor])
 
   def addUser(user: User): Future[Option[String]] =
     Future {
@@ -34,7 +40,12 @@ trait UserResource extends BaseResource {
       post {
         entity(as[User]) { user =>
           completeWithLocationHeader(
-            resourceId = addUser(user),
+            resourceId = {
+              ask(userPersistanceActor, AddUserCommand(user.name, user.surname))
+                  .
+//              userPersistanceActor ? AddUserCommand(user.name, user.surname)
+
+            },
             ifDefinedStatus = 201,
             ifEmptyStatus = 404)
 
