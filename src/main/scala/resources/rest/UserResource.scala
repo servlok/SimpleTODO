@@ -3,14 +3,12 @@ package resources.rest
 import akka.actor.{ActorRef, Props}
 import akka.http.scaladsl.server.Route
 import models.UserRepository.AddUserCommand
-import models.{StubUser, User, UserPersistenceActor}
+import models.{StubUser, User, UserPersistenceActor, UserRepository}
 import util.UUIDGenerator.generate
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait UserResource extends BaseResource {
-
-  import configurations.WebServer._
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 
@@ -18,7 +16,7 @@ trait UserResource extends BaseResource {
 
   def addUser(user: User): Future[Option[String]] =
     Future {
-      val id : String = generate()
+      val id: String = generate()
       StubUser(id)
       Some(id)
     }(executionContext)
@@ -35,25 +33,26 @@ trait UserResource extends BaseResource {
       List(StubUser())
     }
 
+  import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
   val userRoutes: Route = pathPrefix("users") {
     pathEnd {
       post {
-        entity(as[User]) { user =>
+        entity(as[AddUserCommand]) { user =>
           completeWithLocationHeader(
-            resourceId = {
-              ask(userPersistanceActor, AddUserCommand(user.name, user.surname))
-                  .
-//              userPersistanceActor ? AddUserCommand(user.name, user.surname)
-
+            resourceId = Future {
+              Option {
+                userPersistanceActor ! AddUserCommand(user.name, user.surname)
+              }
             },
             ifDefinedStatus = 201,
             ifEmptyStatus = 404)
 
         }
       } ~
-      get {
-        complete(200, fetchUsers())
-      }
+        get {
+          complete(200, fetchUsers())
+        }
     }
   }
 

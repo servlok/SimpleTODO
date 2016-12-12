@@ -1,6 +1,5 @@
 package configurations
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
@@ -12,7 +11,6 @@ object WebServer extends App with RestSupport{
     val host = config.getString("http.host")
     val port = config.getInt("http.port")
 
-    implicit val system = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher

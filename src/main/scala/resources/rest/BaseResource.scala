@@ -1,15 +1,22 @@
 package resources.rest
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.marshalling.{ToResponseMarshallable, ToResponseMarshaller}
 import akka.http.scaladsl.model.headers.Location
 import akka.http.scaladsl.server.{Directives, Route}
-import models.User.JsonSupport
+import org.json4s.{DefaultFormats, native}
+import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
+
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait BaseResource extends Directives with JsonSupport {
+trait BaseResource extends Directives {
+
+  implicit val serialization = native.Serialization
+  implicit val formats = DefaultFormats
 
   implicit def executionContext: ExecutionContext
+  implicit val system = ActorSystem("my-system")
 
   def completeWithLocationHeader[T](resourceId: Future[Option[T]], ifDefinedStatus: Int, ifEmptyStatus: Int): Route =
     onSuccess(resourceId) {
