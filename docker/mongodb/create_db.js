@@ -1,2 +1,2 @@
-db = connect("localhost:27017/simpletodoscala");
-db.createCollection("test");
+db = db.getSiblingDB('simpletodo');
+db.createCollection("tasks")

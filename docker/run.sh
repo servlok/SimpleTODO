@@ -1,0 +1,1 @@
+docker run -d -p 28001:27017 --name simpletodoscala-mongodb simpletodoscala/mongodb

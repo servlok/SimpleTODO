@@ -7,7 +7,7 @@ RUN mkdir -p /data/mongodb \
 COPY create_db.js /data/mongodb/create_db.js
 
 RUN mongod --fork --logpath /var/log/mongodb.log --dbpath /data/mongodb --smallfiles \
-    && CREATE_FILES=/data/mongodb/create_db.js \
+    && CREATE_FILES=/data/mongodb/*.js \
     && for f in $CREATE_FILES; do mongo 127.0.0.1:27017 $f; done \
     && mongod --dbpath /data/mongodb --shutdown \
     && chown -R mongodb /data/mongodb
@@ -15,3 +15,7 @@ RUN mongod --fork --logpath /var/log/mongodb.log --dbpath /data/mongodb --smallf
 # Make the new dir a VOLUME to persists it 
 VOLUME /data/mongodb
 
+CMD ["mongod", "--config", "/etc/mongodb.conf", "--smallfiles"]
+
+EXPOSE 27017
+EXPOSE 28017
