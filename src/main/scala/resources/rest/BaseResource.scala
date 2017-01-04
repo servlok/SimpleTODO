@@ -5,8 +5,6 @@ import akka.http.scaladsl.marshalling.{ToResponseMarshallable, ToResponseMarshal
 import akka.http.scaladsl.model.headers.Location
 import akka.http.scaladsl.server.{Directives, Route}
 import org.json4s.{DefaultFormats, native}
-import de.heikoseeberger.akkahttpjson4s.Json4sSupport._
-
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,7 +14,8 @@ trait BaseResource extends Directives {
   implicit val formats = DefaultFormats
 
   implicit def executionContext: ExecutionContext
-  implicit val system = ActorSystem("my-system")
+
+  implicit val system = ActorSystem("microservices-cqrs")
 
   def completeWithLocationHeader[T](resourceId: Future[Option[T]], ifDefinedStatus: Int, ifEmptyStatus: Int): Route =
     onSuccess(resourceId) {

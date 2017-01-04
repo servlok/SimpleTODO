@@ -10,7 +10,7 @@ resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repos
 
 libraryDependencies ++= {
   val akkaV = "2.4.8"
-  val reactiveMongoV = "0.12.0"
+  val reactiveMongoV = "0.11.14"
   Seq(
     "com.typesafe.akka" %% "akka-actor" % akkaV,
     "com.typesafe.akka" %% "akka-testkit" % akkaV % "test",
@@ -23,7 +23,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-testkit" % akkaV,
     "com.typesafe.akka" %% "akka-multi-node-testkit" % akkaV,
     "com.typesafe.akka" %% "akka-persistence" % akkaV,
-    "com.github.ironfish" %% "akka-persistence-mongo-casbah" % "0.7.6",
+    "com.github.scullxbones" %% "akka-persistence-mongo-rxmongo" % "1.3.7",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test",
     "org.reactivemongo" %% "reactivemongo" % reactiveMongoV,
 
